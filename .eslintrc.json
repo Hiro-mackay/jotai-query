@@ -1,0 +1,85 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "jest": true
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint",
+        "import",
+        "unused-imports"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "prettier"
+    ],
+    "ignorePatterns": [
+        "build"
+    ],
+    "overrides": [],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "settings": {
+        "import/resolver": {
+            "typescript": {
+                "alwaysTryTypes": true
+            }
+        }
+    },
+    "rules": {
+        // Turn on errors for missing imports
+        "import/no-unresolved": "off",
+        // Disallow duplicate module imports
+        "import/no-duplicates": "error",
+        // Sort import path
+        "import/order": [
+            "error",
+            {
+                "groups": [
+                    "builtin", // node "builtin" modules
+                    "external", // "external" modules
+                    "internal", // "internal" modules,
+                    "parent", // modules from a "parent" directory
+                    "sibling", // "sibling" modules from the same or a sibling's directory
+                    "index" // "index" of the current directory
+                ],
+                "pathGroups": [
+                    {
+                        "pattern": "@alias/**",
+                        "group": "parent",
+                        "position": "before"
+                    }
+                ],
+                "alphabetize": {
+                    "order": "asc",
+                    "caseInsensitive": true // case-sensitive
+                },
+                "newlines-between": "never"
+            }
+        ],
+        // Rules disabled '"React" must be in scope when using JSX'
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off",
+        // Delete unused imports
+        "unused-imports/no-unused-imports": "error",
+        // Enforce boolean attributes notation in JSX
+        "react/jsx-boolean-value": "error",
+        // Disallow unnecessary JSX expressions when literals alone are sufficient or enforce JSX expressions on literals in JSX children or attributes
+        "react/jsx-curly-brace-presence": "error",
+        // Disallow extra closing tags for components without children
+        "react/self-closing-comp": [
+            "error",
+            {
+                "component": true,
+                "html": true
+            }
+        ]
+    }
+}
