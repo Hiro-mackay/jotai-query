@@ -1,7 +1,7 @@
 import { Button } from '@chakra-ui/react';
 import { useAtom, useSetAtom } from 'jotai/react';
 import { atom } from 'jotai/vanilla';
-import { atomsWithQuery } from 'jotai-tanstack-query';
+import { atomsWithMutation, atomsWithQuery } from 'jotai-tanstack-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import type { FallbackProps } from 'react-error-boundary';
 
@@ -15,8 +15,40 @@ const [userAtom] = atomsWithQuery(get => ({
   },
 }));
 
+const [, statusAtom] = atomsWithMutation(() => ({
+  mutationKey: ['posts'],
+  mutationFn: async ({ title }: { title: string }) => {
+    const res = await fetch(`https://jsonplaceholder.typicode.com/posts`, {
+      method: 'POST',
+      body: JSON.stringify({
+        title,
+        body: 'body',
+        userId: 1,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    });
+    const data = await res.json();
+    return data;
+  },
+}));
+
+const GenUserData = () => {
+  const [status, dispatch] = useAtom(statusAtom);
+  return (
+    <div style={{ marginTop: 50 }}>
+      <Button colorScheme="blue" onClick={() => dispatch([{ title: 'foo' }])}>
+        Mutation
+      </Button>
+      <pre>{JSON.stringify(status, null, 2)}</pre>
+    </div>
+  );
+};
+
 const UserData = () => {
   const [{ data }, dispatch] = useAtom(userAtom);
+
   return (
     <div>
       <ul>
@@ -68,5 +100,6 @@ export const Root = () => (
   <ErrorBoundary FallbackComponent={Fallback}>
     <Controls />
     <UserData />
+    <GenUserData />
   </ErrorBoundary>
 );
