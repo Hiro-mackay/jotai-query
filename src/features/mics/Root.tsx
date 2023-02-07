@@ -1,16 +1,24 @@
 import { atom, useAtom } from 'jotai';
-import { atomsWithQuery } from 'jotai-tanstack-query';
+import { atomsWithInfiniteQuery } from 'jotai-tanstack-query';
 
-const idAtom = atom(1);
-const [userAtom] = atomsWithQuery(get => ({
+const idAtom = atom(3);
+const [userAtom] = atomsWithInfiniteQuery(get => ({
   queryKey: ['users', get(idAtom)],
   queryFn: async ({ queryKey: [, id] }) => {
     const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
     return res.json();
   },
+  // infinite queries can support paginated fetching
+  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
 }));
 
 export const Root = () => {
   const [data] = useAtom(userAtom);
-  return <div>{JSON.stringify(data)}</div>;
+  return (
+    <>
+      {data.pages.map((userData, index) => (
+        <div key={index}>{JSON.stringify(userData)}</div>
+      ))}
+    </>
+  );
 };
